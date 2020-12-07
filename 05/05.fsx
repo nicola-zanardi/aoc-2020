@@ -32,15 +32,37 @@ let findSeatPosition (str: string) =
     let columnString = str.[7..9]
     (parsePartitioningString rowString, parsePartitioningString columnString)
 
-
 let calculateSeatID seatPosition =
     let r, c = seatPosition
     r * 8 + c
+
+//
 
 let part1 =
     input
     |> List.map (findSeatPosition >> calculateSeatID)
     |> List.max
+
+let part2 =
+    let allSeatsID =
+        [ for r in 1 .. 126 do
+            for c in 0 .. 7 do
+                calculateSeatID (r, c) ]
+
+    let seatsTakenID =
+        input
+        |> List.map (findSeatPosition >> calculateSeatID)
+
+    let missingSeatsID =
+        allSeatsID
+        |> List.filter (fun x -> not (List.contains x seatsTakenID))
+
+    missingSeatsID
+    |> List.filter
+        (fun id ->
+            List.contains (id - 1) seatsTakenID
+            && List.contains (id + 1) seatsTakenID)
+    |> List.head
 
 //////////////////////////////////////////////////////////////////////////
 printfn "TESTING... "
@@ -49,4 +71,6 @@ test <@ findSeatPosition "FBFBBFFRLR" = (44, 5) @>
 
 printfn "DONE"
 //////////////////////////////////////////////////////////////////////////
+
 printfn $"PART 1 => %i{part1}"
+printfn $"PART 2 => %i{part2}"
