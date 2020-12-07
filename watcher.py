@@ -3,6 +3,7 @@
 import argparse
 import os
 from time import sleep
+from sys import platform
 
 # simple thing to run on save
 
@@ -12,7 +13,10 @@ def main(filename, action):
     while True:
         current_time = os.stat(filename).st_mtime
         if current_time != last_time:
-            os.system("cls")
+            if platform == "win32":
+                os.system("cls")
+            else:
+                os.system("clear")
             print(f"{os.path.basename(filename)} changed...")
             last_time = current_time
             os.system(action)
